@@ -1,9 +1,13 @@
+import 'dart:io';
+
+import 'package:expense_planner/widgets/adaptive_text_button.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
-  
+
   const NewTransaction({super.key, required this.addNewTransaction});
 
   @override
@@ -17,7 +21,7 @@ class _NewTransactionState extends State<NewTransaction> {
 
   void _submitData() {
     if (_amountController.text.isEmpty) return;
-    
+
     final enteredTitle = _titleController.text;
     final enteredAmount = _amountController.text == ''
         ? 0.0
@@ -48,10 +52,16 @@ class _NewTransactionState extends State<NewTransaction> {
   }
 
   @override
-  Widget build(BuildContext context) => Card(
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Card(
         elevation: 5,
         child: Container(
-          margin: const EdgeInsets.all(10),
+          margin: EdgeInsets.only(
+              top: 10,
+              left: 10,
+              right: 10,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -74,15 +84,24 @@ class _NewTransactionState extends State<NewTransaction> {
                           ? 'No date chosen'
                           : 'Picked Date: ${DateFormat.yMd().format(_pickedDate as DateTime)}'),
                     ),
-                    TextButton(
-                      style: const ButtonStyle(
-                          foregroundColor:
-                              MaterialStatePropertyAll(Colors.purple)),
-                      onPressed: () => _showDatePicker(),
-                      child: const Text('Choose Date',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16)),
-                    )
+                    AdaptiveTextButton(buttonText: 'Choose date', buttonPressHandler: _showDatePicker)
+                    // AdaptiveTextButton is a reusable Widget and replaces the code below
+                    // Platform.isIOS
+                    //     ? CupertinoButton(
+                    //         child: const Text('Choose Date',
+                    //             style: TextStyle(
+                    //                 fontWeight: FontWeight.bold, fontSize: 16)),
+                    //         onPressed: () => _showDatePicker())
+                    //     : TextButton(
+                    //         style: const ButtonStyle(
+                    //             foregroundColor:
+                    //                 MaterialStatePropertyAll(Colors.purple)),
+                    //         onPressed: () => _showDatePicker(),
+                    //         child: const Text('Choose Date',
+                    //             style: TextStyle(
+                    //                 fontWeight: FontWeight.bold, fontSize: 16)),
+                    //       )
+                    //-----------------------------------------------------------------------
                   ],
                 ),
               ),
@@ -94,5 +113,7 @@ class _NewTransactionState extends State<NewTransaction> {
             ],
           ),
         ),
-      );
+      ),
+    );
+  }
 }
