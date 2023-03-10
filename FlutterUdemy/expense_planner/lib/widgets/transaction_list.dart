@@ -5,62 +5,55 @@ import '../models/transaction.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
+  final Function deleteTransaction;
 
-  const TransactionList({super.key, required this.transactions});
+  const TransactionList(
+      {super.key, required this.transactions, required this.deleteTransaction});
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        height: 400,
-        child: transactions.isEmpty
-            ? Column(
-                children: [
-                  Text(
-                    'No transactions added yet',
+    return transactions.isEmpty
+        ? Column(
+            children: [
+              Text(
+                'No transactions added yet',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                  height: 200,
+                  child: Image.asset('assets/images/waiting.png',
+                      fit: BoxFit.cover))
+            ],
+          )
+        : ListView.builder(
+            itemBuilder: (BuildContext context, int index) {
+              return Card(
+                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+                elevation: 5,
+                child: ListTile(
+                  leading: CircleAvatar(
+                    radius: 30,
+                    child: Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: FittedBox(
+                            child: Text('\$${transactions[index].amount}'))),
+                  ),
+                  title: Text(
+                    transactions[index].title,
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  const SizedBox(height: 10),
-                  SizedBox(height: 200,
-                    child: Image.asset('assets/images/waiting.png', fit: BoxFit.cover))
-                ],
-              )
-            : ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  return Card(
-                      child: Row(
-                    children: [
-                      Container(
-                        width: 100,
-                        padding: const EdgeInsets.all(10),
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 15),
-                        decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Theme.of(context).primaryColor,
-                                width: 2)),
-                        child: Text(
-                          '\$ ${transactions[index].amount.toStringAsFixed(2)}',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
-                              color: Theme.of(context).primaryColor),
-                        ),
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(transactions[index].title,
-                              style: Theme.of(context).textTheme.titleLarge),
-                          Text(
-                            DateFormat.yMMMd().format(transactions[index].date),
-                            style: const TextStyle(color: Colors.grey),
-                          ),
-                        ],
-                      )
-                    ],
-                  ));
-                },
-                itemCount: transactions.length,
-              ));
+                  subtitle:
+                      Text(DateFormat.yMMMd().format(transactions[index].date)),
+                  trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      onPressed: () =>
+                          deleteTransaction(transactions[index].id),
+                      color: Colors.red),
+                ),
+              );
+            },
+            itemCount: transactions.length,
+          );
   }
 }
