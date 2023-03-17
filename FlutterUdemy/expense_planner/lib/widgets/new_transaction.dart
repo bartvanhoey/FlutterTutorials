@@ -1,23 +1,49 @@
-import 'dart:io';
-
 import 'package:expense_planner/widgets/adaptive_text_button.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addNewTransaction;
 
-  const NewTransaction({super.key, required this.addNewTransaction});
+  NewTransaction({super.key, required this.addNewTransaction}) {
+    print('==Constructor NewTransaction Widget');
+  }
 
   @override
-  State<NewTransaction> createState() => _NewTransactionState();
+  State<NewTransaction> createState() {
+    print('==CreateState NewTransaction Widget');
+    return _NewTransactionState();
+  }
 }
 
 class _NewTransactionState extends State<NewTransaction> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _pickedDate;
+
+  _NewTransactionState() {
+    print('==Constructor _NewTransactionState Widget');
+  }
+
+  @override
+  void initState() {
+    print('==initState');
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant NewTransaction oldWidget) {
+    // TODO: implement didUpdateWidget
+    print('==didUpdateWidget');
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    print('==dispose');
+    super.dispose();
+  }
 
   void _submitData() {
     if (_amountController.text.isEmpty) return;
@@ -84,7 +110,9 @@ class _NewTransactionState extends State<NewTransaction> {
                           ? 'No date chosen'
                           : 'Picked Date: ${DateFormat.yMd().format(_pickedDate as DateTime)}'),
                     ),
-                    AdaptiveTextButton(buttonText: 'Choose date', buttonPressHandler: _showDatePicker)
+                    AdaptiveTextButton(
+                        buttonText: 'Choose date',
+                        buttonPressHandler: _showDatePicker)
                     // AdaptiveTextButton is a reusable Widget and replaces the code below
                     // Platform.isIOS
                     //     ? CupertinoButton(
