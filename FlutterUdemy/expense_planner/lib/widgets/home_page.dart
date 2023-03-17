@@ -35,30 +35,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print('build() MyHomePageState');
     final mediaQuery = MediaQuery.of(context);
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final PreferredSizeWidget appBar;
-    if (Platform.isIOS) {
-      appBar = CupertinoNavigationBar(
-          middle: const Text('Personal Expenses'),
-          trailing: Row(mainAxisSize: MainAxisSize.min, children: [
-            GestureDetector(
-              child: const Icon(CupertinoIcons.add),
-              onTap: () => _startAddNewTransaction(context),
-            )
-          ]));
-    } else {
-      appBar = AppBar(
-        title: const Text(
-          'Personal Expenses',
-        ),
-        actions: [
-          IconButton(
-              onPressed: () => _startAddNewTransaction(context),
-              icon: const Icon(Icons.add))
-        ],
-      );
-    }
+    final isPortrait = mediaQuery.orientation == Orientation.portrait;
+    final PreferredSizeWidget appBar = _buildAppBarWidget();
 
     final transactionListWidget = SizedBox(
       height: (mediaQuery.size.height -
@@ -76,41 +57,18 @@ class _MyHomePageState extends State<MyHomePage> {
             // mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
               if (isLandscape)
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  Text('Show Chart', style:  Theme.of(context).textTheme.titleMedium,),
-                  Switch.adaptive(
-                    // activeColor: Theme.of(context).accentColor, -- deprecated
-                    value: _showChart,
-                    onChanged: (bool value) {
-                      setState(() {
-                        _showChart = value;
-                      });
-                    },
-                  )
-                ]),
-              if (!isLandscape)
-                SizedBox(
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        0.3,
-                    child: Chart(recentTransactions: _recentTransactions)),
-              if (!isLandscape) transactionListWidget,
-              if (isLandscape)
-                _showChart
-                    ? SizedBox(
-                        height: (mediaQuery.size.height -
-                                appBar.preferredSize.height -
-                                mediaQuery.padding.top) *
-                            0.7,
-                        child: Chart(recentTransactions: _recentTransactions))
-                    : transactionListWidget
+                ..._buildLandscapeContent(
+                    mediaQuery, appBar, transactionListWidget),
+              if (isPortrait)
+                ..._buildPortraitContent(
+                    mediaQuery, appBar, transactionListWidget),
             ]),
       ),
     );
+
     return Platform.isIOS
         ? CupertinoPageScaffold(
-            child: pageBody, navigationBar: appBar as CupertinoNavigationBar)
+            navigationBar: appBar as CupertinoNavigationBar, child: pageBody)
         : Scaffold(
             appBar: appBar as AppBar,
             body: pageBody,
@@ -151,6 +109,71 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _transactions.removeWhere((element) => element.id == id);
     });
+  }
+
+  List<Widget> _buildLandscapeContent(MediaQueryData mediaQuery,
+          PreferredSizeWidget appBar, SizedBox transactionListWidget) =>
+      [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Text(
+            'Show Chart',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          Switch.adaptive(
+            // activeColor: Theme.of(context).accentColor, -- deprecated
+            value: _showChart,
+            onChanged: (bool value) {
+              setState(() {
+                _showChart = value;
+              });
+            },
+          )
+        ]),
+        _showChart
+            ? SizedBox(
+                height: (mediaQuery.size.height -
+                        appBar.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.7,
+                child: Chart(recentTransactions: _recentTransactions))
+            : transactionListWidget
+      ];
+
+  List<Widget> _buildPortraitContent(MediaQueryData mediaQuery,
+      PreferredSizeWidget appBar, SizedBox transactionListWidget) {
+    return [
+      SizedBox(
+          height: (mediaQuery.size.height -
+                  appBar.preferredSize.height -
+                  mediaQuery.padding.top) *
+              0.3,
+          child: Chart(recentTransactions: _recentTransactions)),
+      transactionListWidget
+    ];
+  }
+
+  PreferredSizeWidget _buildAppBarWidget() {
+    if (Platform.isIOS) {
+      return CupertinoNavigationBar(
+          middle: const Text('Personal Expenses'),
+          trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+            GestureDetector(
+              child: const Icon(CupertinoIcons.add),
+              onTap: () => _startAddNewTransaction(context),
+            )
+          ]));
+    } else {
+      return AppBar(
+        title: const Text(
+          'Personal Expenses',
+        ),
+        actions: [
+          IconButton(
+              onPressed: () => _startAddNewTransaction(context),
+              icon: const Icon(Icons.add))
+        ],
+      );
+    }
   }
 
   bool _showChart = false;

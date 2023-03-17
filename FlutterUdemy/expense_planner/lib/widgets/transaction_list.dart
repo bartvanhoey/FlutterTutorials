@@ -1,5 +1,5 @@
+import 'package:expense_planner/widgets/transaction_item.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 import '../models/transaction.dart';
 
@@ -12,6 +12,7 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('build() TransactionList');
     return transactions.isEmpty
         ? LayoutBuilder(builder: (context, constraints) {
             return Column(
@@ -30,40 +31,10 @@ class TransactionList extends StatelessWidget {
           })
         : ListView.builder(
             itemBuilder: (BuildContext context, int index) {
-              return Card(
-                margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                elevation: 5,
-                child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 30,
-                    child: Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: FittedBox(
-                            child: Text('\$${transactions[index].amount}'))),
-                  ),
-                  title: Text(
-                    transactions[index].title,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  subtitle:
-                      Text(DateFormat.yMMMd().format(transactions[index].date)),
-                  trailing: MediaQuery.of(context).size.width > 460
-                      ? TextButton.icon(
-                          
-                          onPressed: () =>
-                              deleteTransaction(transactions[index].id),
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          label: const Text('Delete', style: TextStyle(color: Colors.red),),
-                          )
-                      : IconButton(
-                          icon: const Icon(Icons.delete),
-                          onPressed: () =>
-                              deleteTransaction(transactions[index].id),
-                          color: Colors.red),
-                ),
-              );
+              return TransactionItem(transaction: transactions[index], deleteTransaction: deleteTransaction);
             },
             itemCount: transactions.length,
           );
   }
 }
+
