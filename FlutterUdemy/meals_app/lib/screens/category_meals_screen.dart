@@ -14,7 +14,7 @@ class CategoryMealsScreen extends StatelessWidget {
         ModalRoute.of(context)?.settings.arguments as Map<String, String>;
     final categoryTitle = routeArgs['title'];
     final categoryId = routeArgs['id'];
-    final categoryMeals = DUMMY_MEALS
+    final categoryMeals = dummyMeals
         .where((meal) => meal.categories.contains(categoryId))
         .toList();
 
