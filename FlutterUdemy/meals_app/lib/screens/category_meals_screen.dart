@@ -42,11 +42,11 @@ class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
     super.didChangeDependencies();
   }
 
-  void _removeMeal(String mealId) {
-    setState(() {
-      categoryMeals.removeWhere((meal) => meal.id == mealId);
-    });
-  }
+  // void _removeMeal(String mealId) {
+  //   setState(() {
+  //     categoryMeals.removeWhere((meal) => meal.id == mealId);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -60,8 +60,7 @@ class _CategoryMealsScreenState extends State<CategoryMealsScreen> {
                 imageUrl: categoryMeals[index].imageUrl,
                 affordability: categoryMeals[index].affordability,
                 complexity: categoryMeals[index].complexity,
-                duration: categoryMeals[index].duration,
-                removeMeal: _removeMeal),
+                duration: categoryMeals[index].duration),
             itemCount: categoryMeals.length));
   }
 }
