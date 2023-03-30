@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:shop_app/screens/product_detail_screen.dart';
 
 class ProductItem extends StatelessWidget {
   final String id;
@@ -20,14 +21,25 @@ class ProductItem extends StatelessWidget {
       child: GridTile(
           footer: GridTileBar(
             backgroundColor: Colors.black87,
-            leading: IconButton(icon: const Icon(Icons.favorite), color: Theme.of(context).colorScheme.secondary, onPressed: (){},),
+            leading: IconButton(
+              icon: const Icon(Icons.favorite),
+              color: Theme.of(context).colorScheme.secondary,
+              onPressed: () {},
+            ),
             title: Text(
               title,
               textAlign: TextAlign.center,
             ),
-            trailing: IconButton(icon: const Icon(Icons.shopping_cart), color: Theme.of(context).colorScheme.secondary, onPressed: () {  }),
+            trailing: IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                color: Theme.of(context).colorScheme.secondary,
+                onPressed: () {}),
           ),
-          child: Image.network(imageUrl, fit: BoxFit.cover)),
+          child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushNamed(ProductDetailScreen.routeName, arguments: id);
+              },
+              child: Image.network(imageUrl, fit: BoxFit.cover))),
     );
   }
 }
