@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/screens/product_detail_screen.dart';
 
+import '../screens/product_detail_screen.dart';
 import '../providers/product.dart';
 
 class ProductItem extends StatelessWidget {
@@ -11,20 +9,26 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context);
+    final product = Provider.of<Product>(context, listen: false);
+    print('rebuilds');
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
           footer: GridTileBar(
             backgroundColor: Colors.black87,
-            leading: IconButton(
-              icon: Icon(
-                  product.isFavorite ? Icons.favorite : Icons.favorite_border),
-              color: Theme.of(context).colorScheme.secondary,
-              onPressed: () {
-                product.toggleFavoriteStatus();
-              },
-            ),
+            leading: Consumer<Product>(
+                builder: (context, product, child) => IconButton(
+                      icon: Icon(product.isFavorite
+                          ? Icons.favorite
+                          : Icons.favorite_border),
+                      color: Theme.of(context).colorScheme.secondaryContainer,
+                      onPressed: () {
+                        product.toggleFavoriteStatus();
+                      },
+                    ),
+                    child: const Text('never change'),
+                    
+                    ),
             title: Text(
               product.title,
               textAlign: TextAlign.center,
