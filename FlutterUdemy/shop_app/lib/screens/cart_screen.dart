@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/cart_provider.dart';
+import 'package:shop_app/providers/cart_provider.dart' show CartProvider;
+
+import '../providers/orders_provider.dart';
+import '../widgets/cart_item.dart';
 
 class CartScreen extends StatelessWidget {
   static const routeName = 'CartScreen';
@@ -8,7 +11,7 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cartProvider = Provider.of<CartProvider>(context);
+    final cart = Provider.of<CartProvider>(context);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Your Cart')),
@@ -26,7 +29,7 @@ class CartScreen extends StatelessWidget {
                     ),
                     const Spacer(),
                     Chip(
-                        label: Text('\$${cartProvider.totalAmount}',
+                        label: Text('\$${cart.totalAmount.toStringAsFixed(2)}',
                             style: TextStyle(
                                 color: Theme.of(context)
                                     .primaryTextTheme
@@ -34,11 +37,30 @@ class CartScreen extends StatelessWidget {
                                     ?.color)),
                         backgroundColor: Theme.of(context).colorScheme.primary),
                     TextButton(
-                      onPressed: () {},
-                      child: Text('Order Now'),
+                      onPressed: () {
+                        Provider.of<OrdersProvider>(context, listen: false)
+                            .addOrder(
+                                cart.items.values.toList(), cart.totalAmount);
+                        cart.Clear();
+                      },
+                      child: const Text('Order Now'),
                     )
                   ]),
-            ))
+            )),
+        const SizedBox(
+          height: 10,
+        ),
+        Expanded(
+            child: ListView.builder(
+                itemBuilder: (context, index) => cart.items.isEmpty
+                    ? Container()
+                    : CartItem(
+                        id: cart.items.values.toList()[index].id,
+                        productId: cart.items.keys.toList()[index],
+                        title: cart.items.values.toList()[index].title,
+                        quantity: cart.items.values.toList()[index].quantity,
+                        price: cart.items.values.toList()[index].price),
+                itemCount: cart.itemCount))
       ]),
     );
   }
